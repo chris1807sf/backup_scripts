@@ -66,3 +66,13 @@ C. The rules file must be in /etc/udev/rules.d/. Restart udev service (sudo /etc
 D. The rules filename must start with two digits, plus a dash (-), and must end with .rules
 The two digits have a reason. See /etc/udev/rules.d/README
 Carlos Santiago
+
+--------------
+# reload /udev rules
+https://askubuntu.com/questions/82470/what-is-the-correct-way-to-restart-udev
+
+ Reload the udev rules:
+ 	$ udevadm control --reload-rules
+ Trigger the new rules:
+ 	$ udevadm trigger
+    
