@@ -1,4 +1,4 @@
+#when it sees a Samsung T9 USB drive being connected run a script --> goal: automated steps for backup of files /// SUBSYSTEM=="block"
 ACTION=="add", SUBSYSTEM=="block", \
 ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="61fd", \
-SYMLINK+="backup_usb_drive", \
 ENV{DEVTYPE}=="partition", RUN+="/bin/sh -c '/home/chris/projects/backup_scripts/backup_on_connect_usb_drive.sh'"

@@ -75,4 +75,43 @@ https://askubuntu.com/questions/82470/what-is-the-correct-way-to-restart-udev
  	$ udevadm control --reload-rules
  Trigger the new rules:
  	$ udevadm trigger
-    
+
+--
+alternative  --> tested on ubunti 24.04 --> NOT working
+$ sudo /etc/init.d/udev restart    
+$ ls -lF /dev | grep myusb
+--
+# see log info from udev (not permanent)
+#as root:
+$ udevadm control --log-priority=debug
+$ journalctl -f
+
+ 
+
+ ------------
+ https://askubuntu.com/questions/783357/create-a-symlink-in-dev-using-etc-udev-rules
+ #get more info related to udev nodes from tree to leaf
+ udevadm info -a /dev/sda1
+ ------------
+
+
+Check:
+https://askubuntu.com/questions/1188336/running-script-with-usb-device
+
+
+
+This is what I do: a systemd service (e.g. borgmatic.service) is triggered by a udev rule based on the hot plug event.
+
+    SUBSYSTEM=="block", ACTION=="add", ENV{DEVTYPE}=="partition", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="borgmatic.service"
+
+For the service in my ~/.config/systemd/user folder
+
+    [Unit] Description=/home backup
+
+    [Service]
+
+    Type=oneshot
+
+    ExecStart=/home/xxx/.local/bin/borgmatic
+
+   
