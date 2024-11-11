@@ -1,0 +1,5 @@
+[Unit] Description=trigger backup by connecting usb device
+
+[Service]
+Type=oneshot
+ExecStart=/home/chris/.local/bin/react_on_connect_usb_drive.sh
