@@ -1,0 +1,3 @@
+ACTION=="add", SUBSYSTEM=="block", \
+ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="61fd", \
+ENV{DEVTYPE}=="partition", RUN+="/bin/sh -c '/home/chris/projects/backup_scripts/backup_on_connect_usb_drive.sh'"

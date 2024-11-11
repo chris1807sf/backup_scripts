@@ -1,2 +1,68 @@
-read.me
-updated
+#read.me
+https://askubuntu.com/questions/1188336/running-script-with-usb-device
+
+Samsung T9 drive:
+[ +10.894810] usb 2-1: new SuperSpeed Plus Gen 2x1 USB device number 3 using xhci_hcd
+[  +0.012335] usb 2-1: New USB device found, idVendor=04e8, idProduct=61fd, bcdDevice= 1.00
+[  +0.000004] usb 2-1: New USB device strings: Mfr=2, Product=3, SerialNumber=1
+[  +0.000001] usb 2-1: Product: PSSD T9
+[  +0.000001] usb 2-1: Manufacturer: Samsung
+[  +0.000000] usb 2-1: SerialNumber: S7KUNS0WA01619A
+[  +0.001975] scsi host0: uas
+[  +0.916881] scsi 0:0:0:0: Direct-Access     Samsung  PSSD T9          0    PQ: 0 ANSI: 6
+[  +0.107992] sd 0:0:0:0: Attached scsi generic sg0 type 0
+[  +0.000553] sd 0:0:0:0: [sda] 1953525168 512-byte logical blocks: (1.00 TB/932 GiB)
+[  +0.000082] sd 0:0:0:0: [sda] Write Protect is off
+[  +0.000002] sd 0:0:0:0: [sda] Mode Sense: 43 00 00 00
+[  +0.000119] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[  +0.000096] sd 0:0:0:0: [sda] Preferred minimum I/O size 512 bytes
+[  +0.000004] sd 0:0:0:0: [sda] Optimal transfer size 2097152 bytes
+
+
+etc/udev/rules.d/90-usb-backup.rules:
+
+ACTION=="add", SUBSYSTEM=="block", \
+ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="61fd", \
+ENV{DEVTYPE}=="partition", RUN+="/bin/sh -c '/home/chris/projects/backup_scripts/backup_on_connect_usb_drive.sh'"
+
+---
+
+https://ubuntuforums.org/archive/index.php/t-502864.html
+
+Due to the interest of this subject, I would like to emphasize that udev rules has other very useful features, for example:
+
+1. if you had GROUP="dialout", the device will belong to that group. This means that all users in the dialout group have special permissions to work with the device.
+
+ACTION=="add", SUBSYSTEM=="usb_device", SYSFS{idVendor}=="040a", SYSFS{idProduct}=="0576", GROUP="dialout"
+
+
+2. if you had SYMLINK+="ladys_camera", a ladys_camera device will be added to your /dev.
+This could be very usefull if you use several usb devices (as most of us do), because their device (/dev/ttyUSB[0-9]) is set depending on plug order.
+This way /dev/ladys_camera will always be your lady's camera.
+
+ACTION=="add", SUBSYSTEM=="usb_device", SYSFS{idVendor}=="040a", SYSFS{idProduct}=="0576", SYMLINK+="ladys_camera"
+
+
+3. Also notice that udev rules work with all king of devices: usb, serial, pcmcia, ...
+udev rules is a simple and easy way to configure all devices (it can configure, load modules, run scripts, set permissions for all your hardware).
+
+
+Final notes:
+
+A. Each line is a device. If you want to break a line add \ at the end
+
+ACTION=="add", SUBSYSTEM=="usb_device", \
+SYSFS{idVendor}=="040a", SYSFS{idProduct}=="0576", \
+SYMLINK+="ladys_camera"
+
+
+B. You can add simultaneous actions in the same line (like group assignment and symbolic link)
+
+ACTION=="add", SUBSYSTEM=="usb_device", SYSFS{idVendor}=="040a", SYSFS{idProduct}=="0576", GROUP="dialout", SYMLINK+="my_modem"
+
+
+C. The rules file must be in /etc/udev/rules.d/. Restart udev service (sudo /etc/init.d/udev restart) after changes.
+
+D. The rules filename must start with two digits, plus a dash (-), and must end with .rules
+The two digits have a reason. See /etc/udev/rules.d/README
+Carlos Santiago
