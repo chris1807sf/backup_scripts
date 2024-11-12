@@ -106,12 +106,29 @@ This is what I do: a systemd service (e.g. borgmatic.service) is triggered by a 
 
 For the service in my ~/.config/systemd/user folder
 
-    [Unit] Description=/home backup
+    [Unit] Description=backup triggered by pluging-in usb drive
 
     [Service]
 
     Type=oneshot
 
     ExecStart=/home/xxx/.local/bin/borgmatic
+
+---
+More info on defining a service
+
+https://askubuntu.com/questions/1485271/how-to-create-the-script-required-for-the-systemd-service
+
+Enable and start the service:
+
+After modifying the unit file, enable and start the service as previously described:
+
+$ sudo systemctl enable my-clone-sync.service
+$ sudo systemctl start my-clone-sync.service
+
+Check the service status:
+
+To verify that the service is running and monitor its status:
+$ sudo systemctl status my-clone-sync.service
 
    
