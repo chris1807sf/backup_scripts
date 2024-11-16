@@ -30,6 +30,10 @@ log_file() {
 log "is triggered"
 log_file "is triggered"
 
+log "USER: $USER"
+log_file "USER: $USER"
+
+
 #wait 1 sec for the device to have been mounted
 sleep 1
 
