@@ -77,7 +77,7 @@ https://askubuntu.com/questions/82470/what-is-the-correct-way-to-restart-udev
  	$ udevadm trigger
 
 --
-alternative  --> tested on ubunti 24.04 --> NOT working
+alternative  --> tested on ubuntu 24.04 --> NOT working
 $ sudo /etc/init.d/udev restart    
 $ ls -lF /dev | grep myusb
 --
@@ -134,4 +134,43 @@ $ sudo systemctl status my-clone-sync.service
 ---
 https://en.wikipedia.org/wiki/Udev#:~:text=udev%20(userspace%20%2Fdev)%20is,nodes%20in%20the%20%2Fdev%20directory.
 
-   
+---
+https://losst.pro/en/using-systemd-services-tutorial
+
+---
+---
+---
+# setting up a .service as a "user"-service: no elevated permissions needed to run
+
+#check the .service file 
+systemd-analyze --user verify react_on_connect_usb_drive.service
+
+cp react_on_connect_usb_drive.service /home/chris/.config/systemd/user/
+
+systemctl --user daemon-reload
+systemctl --user enable react_on_connect_usb_drive.service
+systemctl --user status react_on_connect_usb_drive.service
+systemctl --user start react_on_connect_usb_drive.service
+
+#see logging of systemd
+journalctl -f
+---
+---
+---
+# setting up the udev rule
+
+The rules file must be in /etc/udev/rules.d/
+    $ sudo cp 90-USB-backup.rules /etc/udev/rules.d/
+Reload the udev rules:
+    $ sudo udevadm control --reload-rules
+ Trigger the new rules:
+    $ sudo udevadm trigger
+---
+---
+---
+modified:   90-usb-backup.rules
+modified:   react_on_connect_usb_drive.service
+modified:   react_on_connect_usb_drive.sh
+modified:   read.me
+
+

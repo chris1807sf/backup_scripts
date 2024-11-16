@@ -5,6 +5,9 @@
 BASENAME_SCRIPT=$(basename $0)
 HOSTNAME=$(hostname)
 
+LOG_FILE=/tmp/$BASENAME_SCRIPT.txt
+BACKUP_DIR=/media/chris/T9/backups/chris-thinkpad/
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
@@ -12,28 +15,34 @@ NC='\033[0m' # No Color
 #echo -e "I ${RED}love${NC} Stack Overflow"
 
 log() {
-    echo -e "$BASENAME_SCRIPT: $1"
+   CURRENT_DATE=$(date +'%Y-%m-%d %H:%M:%S %Z')
+   echo -e "$BASENAME_SCRIPT, $CURRENT_DATE: $1"
 }
 
-TEMP_FILE=/tmp/$BASENAME_SCRIPT.txt
+log_file() {
+   CURRENT_DATE=$(date +'%Y-%m-%d %H:%M:%S %Z')
+   echo -e "$BASENAME_SCRIPT, $CURRENT_DATE: $1" >> $LOG_FILE
+}
 
 #exec >> $TEMP_FILE
 #exec 2>&1
 
-wall react_on_connected_usb_drive
+log "is triggered"
+log_file "is triggered"
 
-#echo "TIME BEFORE IS=$TIMEBEFORE"
-CURRENT_DATE=$(date +'%Y-%m-%d %H:%M:%S %Z')
-echo "$CURRENT_DATE: $BASENAME_SCRIPT is triggered" >> $TEMP_FILE
-df >> $TEMP_FILE
-echo "DEVNAME: $DEVNAME" >> $TEMP_FILE
+#wait 1 sec for the device to have been mounted
+sleep 1
 
-#$DEVNAME is expected to be similar to:  /dev/sda1
+df >> $LOG_FILE
 
-#mount_result=$(mount $DEVNAME /home/chris/mnt/)
-#echo "mount_result: $mount_result" >> $TEMP_FILE
-
-wall usb-drive-connected - done
+if [[ -d $BACKUP_DIR ]] 
+then
+   log_file "$BACKUP_DIR exists"
+   cp -a $LOG_FILE $BACKUP_DIR
+   log_file "cp done"
+else
+   log_file "$BACKUP_DIR doesn't exists"
+fi
 
 exit 0
 
@@ -46,5 +55,3 @@ then
 else
    echo "No $DEVNAME seen" >> $TEMP_FILE
 fi
-
-wall usb-drive-connected - done
